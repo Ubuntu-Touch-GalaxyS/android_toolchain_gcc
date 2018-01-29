@@ -797,11 +797,11 @@ Enum(stack_protector_guard) String(global) Value(SSP_GLOBAL)
 
 mindirect-branch=
 Target Report RejectNegative Joined Enum(indirect_branch) Var(ix86_indirect_branch) Init(indirect_branch_keep)
-Update indirect call and jump.
+Convert indirect call and jump to call and return thunks.
 
 mfunction-return=
 Target Report RejectNegative Joined Enum(indirect_branch) Var(ix86_function_return) Init(indirect_branch_keep)
-Update function return.
+Convert function return to call and return thunk.
 
 Enum
 Name(indirect_branch) Type(enum indirect_branch)
@@ -819,18 +819,6 @@ Enum(indirect_branch) String(thunk-inline) Value(indirect_branch_thunk_inline)
 EnumValue
 Enum(indirect_branch) String(thunk-extern) Value(indirect_branch_thunk_extern)
 
-mindirect-branch-loop=
-Target Report RejectNegative Joined Enum(indirect_branch_loop) Var(ix86_indirect_branch_loop) Undocumented Init(indirect_branch_loop_lfence)
-
-Enum
-Name(indirect_branch_loop) Type(enum indirect_branch_loop)
-Known loop choices (for use with the -mindirect-branch-loop= option):
-
-EnumValue
-Enum(indirect_branch_loop) String(lfence) Value(indirect_branch_loop_lfence)
-
-EnumValue
-Enum(indirect_branch_loop) String(pause) Value(indirect_branch_loop_pause)
-
-EnumValue
-Enum(indirect_branch_loop) String(nop) Value(indirect_branch_loop_nop)
+mindirect-branch-register
+Target Report Var(ix86_indirect_branch_register) Init(0)
+Force indirect call and jump via register.

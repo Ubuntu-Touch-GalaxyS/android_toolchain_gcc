@@ -6,6 +6,7 @@ void func1 (void);
 void func2 (void);
 void func3 (void);
 void func4 (void);
+void func4 (void);
 void func5 (void);
 
 __attribute__ ((indirect_branch("keep")))
@@ -35,6 +36,7 @@ bar (int i)
     }
 }
 
-/* { dg-final { scan-assembler-not "__x86.indirect_thunk" } } */
+/* { dg-final { scan-assembler-not "__x86_indirect_thunk" } } */
+/* { dg-final { scan-assembler-not {\t(lfence|pause)} } } */
 /* { dg-final { scan-assembler-not "jmp\[ \t\]*\.LIND" } } */
 /* { dg-final { scan-assembler-not "call\[ \t\]*\.LIND" } } */
