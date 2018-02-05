@@ -89,7 +89,6 @@ emutls_init (void)
     abort ();
   emutls_key_created = 1;
 }
-#endif
 
 __attribute__((destructor))
 static void
@@ -98,6 +97,7 @@ unregister_emutls_key (void)
   if (emutls_key_created)
     __gthread_key_delete (emutls_key);
 }
+#endif
 
 static void *
 emutls_alloc (struct __emutls_object *obj)
