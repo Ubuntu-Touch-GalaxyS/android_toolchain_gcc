@@ -30,6 +30,22 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #include "libgcc_tm.h"
 #include "gthr.h"
 
+#ifdef __BIONIC__
+/* There are 4 pthread key cleanup rounds on Bionic. Delay emutls deallocation
+   to round 2. We need to delay deallocation because:
+    - Android versions older than M lack __cxa_thread_atexit_impl, so apps
+      use a pthread key destructor to call C++ destructors.
+    - Apps might use __thread/thread_local variables in pthread destructors.
+   We can't wait until the final two rounds, because jemalloc needs two rounds
+   after the final malloc/free call to free its thread-specific data (see
+   https://reviews.llvm.org/D46978#1107507). Bugs:
+    - https://github.com/android-ndk/ndk/issues/687.
+    - http://b/16847284, http://b/78022094. */
+#define EMUTLS_SKIP_DESTRUCTOR_ROUNDS 1
+#else
+#define EMUTLS_SKIP_DESTRUCTOR_ROUNDS 0
+#endif
+
 typedef unsigned int word __attribute__((mode(word)));
 typedef unsigned int pointer __attribute__((mode(pointer)));
 
@@ -46,6 +62,7 @@ struct __emutls_object
 
 struct __emutls_array
 {
+  pointer skip_destructor_rounds;
   pointer size;
   void **data[];
 };
@@ -67,16 +84,30 @@ static void
 emutls_destroy (void *ptr)
 {
   struct __emutls_array *arr = ptr;
-  pointer size = arr->size;
-  pointer i;
 
-  for (i = 0; i < size; ++i)
+  /* emutls is deallocated using a pthread key destructor. These destructors
+     are called in several rounds to accommodate destructor functions that
+     (re)initialize key values with pthread_setspecific. Delay the emutls
+     deallocation to accommodate other end-of-thread cleanup tasks like
+     calling thread_local destructors. */
+  if (arr->skip_destructor_rounds > 0)
     {
-      if (arr->data[i])
-	free (arr->data[i][-1]);
+      arr->skip_destructor_rounds--;
+      __gthread_setspecific (emutls_key, (void *) arr);
     }
+  else
+    {
+      pointer size = arr->size;
+      pointer i;
 
-  free (ptr);
+      for (i = 0; i < size; ++i)
+	{
+	  if (arr->data[i])
+	    free (arr->data[i][-1]);
+	}
+
+      free (ptr);
+    }
 }
 
 static void
@@ -163,12 +194,14 @@ __emutls_get_address (struct __emutls_object *obj)
     }
 
   struct __emutls_array *arr = __gthread_getspecific (emutls_key);
+  const pointer hdr_size = sizeof (struct __emutls_array) / sizeof (void *);
   if (__builtin_expect (arr == NULL, 0))
     {
       pointer size = offset + 32;
-      arr = calloc (size + 1, sizeof (void *));
+      arr = calloc (size + hdr_size, sizeof (void *));
       if (arr == NULL)
 	abort ();
+      arr->skip_destructor_rounds = EMUTLS_SKIP_DESTRUCTOR_ROUNDS;
       arr->size = size;
       __gthread_setspecific (emutls_key, (void *) arr);
     }
@@ -178,7 +211,7 @@ __emutls_get_address (struct __emutls_object *obj)
       pointer size = orig_size * 2;
       if (offset > size)
 	size = offset + 32;
-      arr = realloc (arr, (size + 1) * sizeof (void *));
+      arr = realloc (arr, (size + hdr_size) * sizeof (void *));
       if (arr == NULL)
 	abort ();
       arr->size = size;
