@@ -183,6 +183,30 @@ _Unwind_IteratePhdrCallback (struct dl_phdr_info *info, size_t size, void *ptr)
   p_eh_frame_hdr = NULL;
   p_dynamic = NULL;
 
+#if defined(__BIONIC__) && defined(__i386__)
+  if (load_base == 0)
+    {
+      /* A load_base of 0 normally indicates a non-PIE executable. There was a
+	 bug in Android's dynamic loader prior to API 18, though, where
+	 dl_iterate_phdr incorrectly passed a load_base of 0 for a PIE
+	 executable. Work around the bug by recalculating load_base using
+	 the PT_PHDR segment. This code path isn't needed for arm32, because
+	 arm32 didn't have dl_iterate_phdr until API 21.
+	 https://github.com/android-ndk/ndk/issues/505. */
+      size_t i;
+      for (i = 0; i < info->dlpi_phnum; ++i)
+	{
+	  const ElfW(Phdr) *fix_phdr = &info->dlpi_phdr[i];
+	  if (fix_phdr->p_type == PT_PHDR)
+	    {
+	      load_base = (_Unwind_Ptr) info->dlpi_phdr -
+			  (_Unwind_Ptr) fix_phdr->p_vaddr;
+	      break;
+	    }
+	}
+    }
+#endif
+
   struct frame_hdr_cache_element *prev_cache_entry = NULL,
     *last_cache_entry = NULL;
 
