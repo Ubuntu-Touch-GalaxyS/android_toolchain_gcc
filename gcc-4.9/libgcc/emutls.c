@@ -121,12 +121,15 @@ emutls_init (void)
   emutls_key_created = 1;
 }
 
-__attribute__((destructor))
-static void
-unregister_emutls_key (void)
+__attribute__((visibility("hidden")))
+void
+__emutls_unregister_key (void)
 {
   if (emutls_key_created)
-    __gthread_key_delete (emutls_key);
+    {
+      emutls_key_created = 0;
+      __gthread_key_delete (emutls_key);
+    }
 }
 #endif
 
