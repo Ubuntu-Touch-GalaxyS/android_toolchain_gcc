@@ -28,12 +28,17 @@ ifndef SHLIB_PTHREAD_LDFLAG
 SHLIB_PTHREAD_LDFLAG =
 endif
 
+SHLIB_LDFLAGS = -Wl,--dynamicbase -Wl,--nxcompat
+ifeq (,$(findstring m32,$(CFLAGS)))
+SHLIB_LDFLAGS += -Wl,--high-entropy-va
+endif
+
 SHLIB_LINK = $(LN_S) -f $(SHLIB_MAP) $(SHLIB_MAP).def && \
 	if [ ! -d $(SHLIB_DIR) ]; then \
 		mkdir $(SHLIB_DIR); \
 	else true; fi && \
 	$(CC) $(LIBGCC2_CFLAGS) $(SHLIB_PTHREAD_CFLAG) \
-	-shared -nodefaultlibs \
+	-shared -nodefaultlibs $(SHLIB_LDFLAGS) \
 	$(SHLIB_MAP).def \
 	-Wl,--out-implib,$(SHLIB_DIR)/$(SHLIB_IMPLIB).tmp \
 	-o $(SHLIB_DIR)/$(SHLIB_SONAME).tmp @multilib_flags@ \
