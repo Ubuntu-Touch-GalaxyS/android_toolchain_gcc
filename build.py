@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2015 The Android Open Source Project
+# Copyright (C) 2018 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,51 +14,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Builds GCC for Android."""
-from __future__ import print_function
-
+"""Bootstrapper for do_build.py."""
+import logging
 import os
 import site
-
-site.addsitedir(os.path.join(os.path.dirname(__file__), '../../ndk/build/lib'))
-
-import build_support
+import subprocess
+import sys
 
 
-class ArgParser(build_support.ArgParser):
-    def __init__(self):
-        super(ArgParser, self).__init__()
-
-        self.add_argument(
-            '--toolchain', choices=build_support.ALL_TOOLCHAINS,
-            help='Toolchain to build. Builds all if not present.')
+THIS_DIR = os.path.realpath(os.path.dirname(__file__))
+ANDROID_TOP = os.path.join(THIS_DIR, '../..')
 
 
-def main(args):
-    GCC_VERSION = '4.9'
+site.addsitedir(os.path.join(ANDROID_TOP, 'ndk'))
+import bootstrap  # pylint: disable=import-error,wrong-import-position
 
-    toolchains = build_support.ALL_TOOLCHAINS
-    if args.toolchain is not None:
-        toolchains = [args.toolchain]
 
-    print('Building {} toolchains: {}'.format(args.host, ' '.join(toolchains)))
-    for toolchain in toolchains:
-        toolchain_name = '-'.join([toolchain, GCC_VERSION])
-        sysroot_arg = '--sysroot={}'.format(
-            build_support.sysroot_path(toolchain))
-        build_cmd = [
-            'bash', 'build-gcc.sh', build_support.toolchain_path(),
-            build_support.ndk_path(), toolchain_name, build_support.jobs_arg(),
-            sysroot_arg,
-        ]
+def main():
+    """Program entry point.
 
-        if args.host in ('windows', 'windows64'):
-            build_cmd.append('--mingw')
+    Bootstraps do_build.py with Python 3.
+    """
+    logging.basicConfig(level=logging.INFO)
 
-        if args.host != 'windows':
-            build_cmd.append('--try-64')
+    bootstrap.bootstrap()
+    subprocess.check_call(
+        ['python3', os.path.join(THIS_DIR, 'do_build.py')] +
+        sys.argv[1:])
 
-        build_support.build(build_cmd, args)
 
 if __name__ == '__main__':
-    build_support.run(main, ArgParser)
+    main()
