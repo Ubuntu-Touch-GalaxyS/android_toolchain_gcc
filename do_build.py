@@ -21,8 +21,12 @@ import os
 import site
 
 site.addsitedir(os.path.join(os.path.dirname(__file__), '../../ndk/build/lib'))
+site.addsitedir(os.path.join(os.path.dirname(__file__), '../../ndk'))
 
+# pylint: disable=import-error,wrong-import-position
 import build_support
+from ndk.hosts import Host
+# pylint: enable=import-error,wrong-import-position
 
 
 class ArgParser(build_support.ArgParser):
@@ -41,7 +45,7 @@ def main(args):
     if args.toolchain is not None:
         toolchains = [args.toolchain]
 
-    print('Building {} toolchains: {}'.format(args.host, ' '.join(toolchains)))
+    print(f'Building {args.host.value} toolchains: {" ".join(toolchains)}')
     for toolchain in toolchains:
         toolchain_name = '-'.join([toolchain, GCC_VERSION])
         sysroot_arg = '--sysroot={}'.format(
@@ -52,10 +56,10 @@ def main(args):
             sysroot_arg,
         ]
 
-        if args.host in ('windows', 'windows64'):
+        if args.host.is_windows:
             build_cmd.append('--mingw')
 
-        if args.host != 'windows':
+        if args.host != Host.Windows:
             build_cmd.append('--try-64')
 
         build_support.build(build_cmd, args)
