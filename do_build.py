@@ -25,7 +25,6 @@ site.addsitedir(os.path.join(os.path.dirname(__file__), '../../ndk'))
 
 # pylint: disable=import-error,wrong-import-position
 import build_support
-from ndk.hosts import Host
 # pylint: enable=import-error,wrong-import-position
 
 
@@ -51,16 +50,18 @@ def main(args):
         sysroot_arg = '--sysroot={}'.format(
             build_support.sysroot_path(toolchain))
         build_cmd = [
-            'bash', 'build-gcc.sh', build_support.toolchain_path(),
-            build_support.ndk_path(), toolchain_name, build_support.jobs_arg(),
+            'bash',
+            'build-gcc.sh',
+            build_support.toolchain_path(),
+            build_support.ndk_path(),
+            toolchain_name,
+            build_support.jobs_arg(),
             sysroot_arg,
+            '--try-64',
         ]
 
         if args.host.is_windows:
             build_cmd.append('--mingw')
-
-        if args.host != Host.Windows:
-            build_cmd.append('--try-64')
 
         build_support.build(build_cmd, args)
 
