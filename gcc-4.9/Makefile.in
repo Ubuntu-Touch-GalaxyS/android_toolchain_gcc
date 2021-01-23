@@ -48778,6 +48778,7 @@ all-target-winsup: maybe-all-target-libtermcap
 configure-target-newlib: maybe-all-binutils
 configure-target-newlib: maybe-all-ld
 configure-target-libgfortran: maybe-all-target-libquadmath
+install-target-libiberty: maybe-install-libiberty
 
 
 # Dependencies for target modules on other target modules are

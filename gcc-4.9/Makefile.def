@@ -553,6 +553,7 @@ dependencies = { module=install-target-libjava; on=install-target-libgcc; };
 dependencies = { module=install-target-libitm; on=install-target-libgcc; };
 dependencies = { module=install-target-libobjc; on=install-target-libgcc; };
 dependencies = { module=install-target-libstdc++-v3; on=install-target-libgcc; };
+dependencies = { module=install-target-libiberty; on=install-libiberty; };
 
 // Target modules in the 'src' repository.
 lang_env_dependencies = { module=libtermcap; };
