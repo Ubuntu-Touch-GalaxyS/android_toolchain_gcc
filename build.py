@@ -35,7 +35,7 @@ def main():
 
     Bootstraps do_build.py with Python 3.
     """
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
 
     bootstrap.bootstrap()
     subprocess.check_call(
