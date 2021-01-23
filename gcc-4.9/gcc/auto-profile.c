@@ -763,7 +763,7 @@ autofdo_source_profile::write_annotated_count () const
       {
         char buf[1024];
         snprintf (buf, 1024,
-                  "%s:"HOST_WIDEST_INT_PRINT_DEC":"HOST_WIDEST_INT_PRINT_DEC,
+                  "%s:" HOST_WIDEST_INT_PRINT_DEC":" HOST_WIDEST_INT_PRINT_DEC,
                   afdo_string_table->get_name (iter->first),
                   iter->second->total_count (),
                   iter->second->total_annotated_count ());

@@ -2020,10 +2020,10 @@ dump_cgraph_node (FILE *f, struct cgraph_node *node)
   fprintf (f, "  First run: %i\n", node->tp_first_run);
   fprintf (f, "  Function flags:");
   if (node->count)
-    fprintf (f, " executed "HOST_WIDEST_INT_PRINT_DEC"x",
+    fprintf (f, " executed " HOST_WIDEST_INT_PRINT_DEC"x",
 	     (HOST_WIDEST_INT)node->count);
   if (node->max_bb_count)
-    fprintf (f, " hottest bb executed "HOST_WIDEST_INT_PRINT_DEC"x",
+    fprintf (f, " hottest bb executed " HOST_WIDEST_INT_PRINT_DEC"x",
 	     (HOST_WIDEST_INT)node->max_bb_count);
   if (node->origin)
     fprintf (f, " nested in: %s", node->origin->asm_name ());
@@ -2075,7 +2075,7 @@ dump_cgraph_node (FILE *f, struct cgraph_node *node)
       fprintf (f, "%s/%i ", edge->caller->asm_name (),
 	       edge->caller->order);
       if (edge->count)
-	fprintf (f, "("HOST_WIDEST_INT_PRINT_DEC"x) ",
+	fprintf (f, "(" HOST_WIDEST_INT_PRINT_DEC"x) ",
 		 (HOST_WIDEST_INT)edge->count);
       if (edge->frequency)
 	fprintf (f, "(%.2f per call) ",
@@ -2102,7 +2102,7 @@ dump_cgraph_node (FILE *f, struct cgraph_node *node)
       if (edge->indirect_inlining_edge)
 	fprintf (f, "(indirect_inlining) ");
       if (edge->count)
-	fprintf (f, "("HOST_WIDEST_INT_PRINT_DEC"x) ",
+	fprintf (f, "(" HOST_WIDEST_INT_PRINT_DEC"x) ",
 		 (HOST_WIDEST_INT)edge->count);
       if (edge->frequency)
 	fprintf (f, "(%.2f per call) ",

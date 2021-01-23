@@ -282,7 +282,7 @@ cgraph_node_opt_info (struct cgraph_node *node, bool emit_mod_info)
     }
 
   if (profile_info)
-    sprintf (buf, "%s ("HOST_WIDEST_INT_PRINT_DEC")", buf, node->count);
+    sprintf (buf, "%s (" HOST_WIDEST_INT_PRINT_DEC")", buf, node->count);
   return buf;
 }
 
@@ -339,7 +339,7 @@ dump_inline_decision (struct cgraph_edge *edge)
     {
       const char *call_count_str = " with call count ";
       char *buf = (char *) xmalloc (strlen (call_count_str) + MAX_INT_LENGTH);
-      sprintf (buf, "%s"HOST_WIDEST_INT_PRINT_DEC, call_count_str,
+      sprintf (buf, "%s" HOST_WIDEST_INT_PRINT_DEC, call_count_str,
 	       edge->count);
       call_count_text = buf;
     }

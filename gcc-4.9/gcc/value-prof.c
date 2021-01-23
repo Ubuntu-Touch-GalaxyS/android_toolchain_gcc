@@ -270,10 +270,10 @@ dump_histogram_value (FILE *dump_file, histogram_value hist)
 	   unsigned int i;
 	   fprintf (dump_file, " [");
            for (i = 0; i < hist->hdata.intvl.steps; i++)
-	     fprintf (dump_file, " %d:"HOST_WIDEST_INT_PRINT_DEC,
+	     fprintf (dump_file, " %d:" HOST_WIDEST_INT_PRINT_DEC,
 		      hist->hdata.intvl.int_start + i,
 		      (HOST_WIDEST_INT) hist->hvalue.counters[i]);
-	   fprintf (dump_file, " ] outside range:"HOST_WIDEST_INT_PRINT_DEC,
+	   fprintf (dump_file, " ] outside range:" HOST_WIDEST_INT_PRINT_DEC,
 		    (HOST_WIDEST_INT) hist->hvalue.counters[i]);
 	}
       fprintf (dump_file, ".\n");
@@ -283,8 +283,8 @@ dump_histogram_value (FILE *dump_file, histogram_value hist)
       fprintf (dump_file, "Pow2 counter ");
       if (hist->hvalue.counters)
 	{
-	   fprintf (dump_file, "pow2:"HOST_WIDEST_INT_PRINT_DEC
-		    " nonpow2:"HOST_WIDEST_INT_PRINT_DEC,
+	   fprintf (dump_file, "pow2:" HOST_WIDEST_INT_PRINT_DEC
+		    " nonpow2:" HOST_WIDEST_INT_PRINT_DEC,
 		    (HOST_WIDEST_INT) hist->hvalue.counters[0],
 		    (HOST_WIDEST_INT) hist->hvalue.counters[1]);
 	}
@@ -295,9 +295,9 @@ dump_histogram_value (FILE *dump_file, histogram_value hist)
       fprintf (dump_file, "Single value ");
       if (hist->hvalue.counters)
 	{
-	   fprintf (dump_file, "value:"HOST_WIDEST_INT_PRINT_DEC
-		    " match:"HOST_WIDEST_INT_PRINT_DEC
-		    " wrong:"HOST_WIDEST_INT_PRINT_DEC,
+	   fprintf (dump_file, "value:" HOST_WIDEST_INT_PRINT_DEC
+		    " match:" HOST_WIDEST_INT_PRINT_DEC
+		    " wrong:" HOST_WIDEST_INT_PRINT_DEC,
 		    (HOST_WIDEST_INT) hist->hvalue.counters[0],
 		    (HOST_WIDEST_INT) hist->hvalue.counters[1],
 		    (HOST_WIDEST_INT) hist->hvalue.counters[2]);
@@ -309,8 +309,8 @@ dump_histogram_value (FILE *dump_file, histogram_value hist)
       fprintf (dump_file, "Average value ");
       if (hist->hvalue.counters)
 	{
-	   fprintf (dump_file, "sum:"HOST_WIDEST_INT_PRINT_DEC
-		    " times:"HOST_WIDEST_INT_PRINT_DEC,
+	   fprintf (dump_file, "sum:" HOST_WIDEST_INT_PRINT_DEC
+		    " times:" HOST_WIDEST_INT_PRINT_DEC,
 		    (HOST_WIDEST_INT) hist->hvalue.counters[0],
 		    (HOST_WIDEST_INT) hist->hvalue.counters[1]);
 	}
@@ -321,7 +321,7 @@ dump_histogram_value (FILE *dump_file, histogram_value hist)
       fprintf (dump_file, "IOR value ");
       if (hist->hvalue.counters)
 	{
-	   fprintf (dump_file, "ior:"HOST_WIDEST_INT_PRINT_DEC,
+	   fprintf (dump_file, "ior:" HOST_WIDEST_INT_PRINT_DEC,
 		    (HOST_WIDEST_INT) hist->hvalue.counters[0]);
 	}
       fprintf (dump_file, ".\n");
@@ -331,9 +331,9 @@ dump_histogram_value (FILE *dump_file, histogram_value hist)
       fprintf (dump_file, "Constant delta ");
       if (hist->hvalue.counters)
 	{
-	   fprintf (dump_file, "value:"HOST_WIDEST_INT_PRINT_DEC
-		    " match:"HOST_WIDEST_INT_PRINT_DEC
-		    " wrong:"HOST_WIDEST_INT_PRINT_DEC,
+	   fprintf (dump_file, "value:" HOST_WIDEST_INT_PRINT_DEC
+		    " match:" HOST_WIDEST_INT_PRINT_DEC
+		    " wrong:" HOST_WIDEST_INT_PRINT_DEC,
 		    (HOST_WIDEST_INT) hist->hvalue.counters[0],
 		    (HOST_WIDEST_INT) hist->hvalue.counters[1],
 		    (HOST_WIDEST_INT) hist->hvalue.counters[2]);
@@ -344,9 +344,9 @@ dump_histogram_value (FILE *dump_file, histogram_value hist)
       fprintf (dump_file, "Indirect call ");
       if (hist->hvalue.counters)
 	{
-	   fprintf (dump_file, "value:"HOST_WIDEST_INT_PRINT_DEC
-		    " match:"HOST_WIDEST_INT_PRINT_DEC
-		    " all:"HOST_WIDEST_INT_PRINT_DEC,
+	   fprintf (dump_file, "value:" HOST_WIDEST_INT_PRINT_DEC
+		    " match:" HOST_WIDEST_INT_PRINT_DEC
+		    " all:" HOST_WIDEST_INT_PRINT_DEC,
 		    (HOST_WIDEST_INT) hist->hvalue.counters[0],
 		    (HOST_WIDEST_INT) hist->hvalue.counters[1],
 		    (HOST_WIDEST_INT) hist->hvalue.counters[2]);
@@ -361,7 +361,7 @@ dump_histogram_value (FILE *dump_file, histogram_value hist)
       fprintf (dump_file, "Time profile ");
       if (hist->hvalue.counters)
       {
-        fprintf (dump_file, "time:"HOST_WIDEST_INT_PRINT_DEC,
+        fprintf (dump_file, "time:" HOST_WIDEST_INT_PRINT_DEC,
                  (HOST_WIDEST_INT) hist->hvalue.counters[0]);
       }
       fprintf (dump_file, ".\n");
@@ -1716,8 +1716,8 @@ gimple_ic_transform_single_targ (gimple stmt, histogram_value histogram)
       print_generic_expr (dump_file, direct_call->decl, TDF_SLIM);
       fprintf (dump_file, " transformation on insn postponned to ipa-profile");
       print_gimple_stmt (dump_file, stmt, 0, TDF_SLIM);
-      fprintf (dump_file, "hist->count "HOST_WIDEST_INT_PRINT_DEC
-	       " hist->all "HOST_WIDEST_INT_PRINT_DEC"\n", count, all);
+      fprintf (dump_file, "hist->count " HOST_WIDEST_INT_PRINT_DEC
+	       " hist->all " HOST_WIDEST_INT_PRINT_DEC"\n", count, all);
     }
 
   return true;
@@ -1851,8 +1851,8 @@ gimple_ic_transform_mult_targ (gimple stmt, histogram_value histogram)
       print_gimple_stmt (dump_file, stmt, 0, TDF_SLIM);
       fprintf (dump_file, "==>\n");
       print_gimple_stmt (dump_file, modify1, 0, TDF_SLIM);
-      fprintf (dump_file, "hist->count "HOST_WIDEST_INT_PRINT_DEC
-	       " hist->all "HOST_WIDEST_INT_PRINT_DEC"\n", count1, all);
+      fprintf (dump_file, "hist->count " HOST_WIDEST_INT_PRINT_DEC
+	       " hist->all " HOST_WIDEST_INT_PRINT_DEC"\n", count1, all);
     }
 
   if (direct_call2 && check_ic_target (stmt, direct_call2)
@@ -1894,8 +1894,8 @@ gimple_ic_transform_mult_targ (gimple stmt, histogram_value histogram)
           print_gimple_stmt (dump_file, stmt, 0, TDF_SLIM);
           fprintf (dump_file, "=>\n");
           print_gimple_stmt (dump_file, modify2, 0, TDF_SLIM);
-          fprintf (dump_file, "hist->count "HOST_WIDEST_INT_PRINT_DEC
-                   " hist->all "HOST_WIDEST_INT_PRINT_DEC"\n", count2,
+          fprintf (dump_file, "hist->count " HOST_WIDEST_INT_PRINT_DEC
+                   " hist->all " HOST_WIDEST_INT_PRINT_DEC"\n", count2,
                    all - count1);
         }
     }
