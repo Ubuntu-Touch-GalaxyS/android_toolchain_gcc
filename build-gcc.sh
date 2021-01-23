@@ -252,9 +252,25 @@ export ABI=$HOST_GMP_ABI
 
 # Note that the following flags only apply for "build" in canadian
 if [ "$BUILD_DEBUGGABLE" = "yes" ] ; then
-  CFLAGS_FOR_BUILD="-O0 -g"
+  echo $CC | grep -q clang
+  if [ $? == "0" ];
+  then
+    echo "using clang compiler"
+    CFLAGS_FOR_BUILD="-O0 -g -fbracket-depth=512"
+  else
+    echo "using gcc"
+    CFLAGS_FOR_BUILD="-O0 -g"
+  fi
 else
-  CFLAGS_FOR_BUILD="-O2 -s"
+  echo $CC | grep -q clang
+  if [ $? == "0" ];
+  then
+    echo "using clang compiler"
+    CFLAGS_FOR_BUILD="-O2 -fbracket-depth=512"
+  else
+    echo "using gcc"
+    CFLAGS_FOR_BUILD="-O2 -s"
+  fi
 fi
 CXXFLAGS_FOR_BUILD="$CFLAGS_FOR_BUILD"
 LDFLAGS_FOR_BUILD=
@@ -366,19 +382,22 @@ fi
 
 # Build GNU sed so the configure script works for MIPS/MIPS64 on Darwin.
 # http://b/22099482
-cd $BUILD_OUT && run $SRC_DIR/sed/configure
-if [ $? != 0 ] ; then
-    dump "Error while trying to configure sed. See $TMPLOG"
-    exit 1
-fi
-run make -j$NUM_JOBS
-if [ $? != 0 ] ; then
-    dump "Error while trying to build sed. See $TMPLOG"
-    exit 1
-fi
+if [ ! -f "$HOME/bin/sed" ];
+then
+    cd $BUILD_OUT && run $SRC_DIR/sed/configure
+    if [ $? != 0 ] ; then
+        dump "Error while trying to configure sed. See $TMPLOG"
+        exit 1
+    fi
+    run make -j$NUM_JOBS
+    if [ $? != 0 ] ; then
+        dump "Error while trying to build sed. See $TMPLOG"
+        exit 1
+    fi
 
-# Put our freshly-built GNU sed ahead of the system one on the path.
-export PATH=$BUILD_OUT/sed/:$PATH
+    # Put our freshly-built GNU sed ahead of the system one on the path.
+    export PATH=$BUILD_OUT/sed/:$PATH
+fi
 
 if [ -f $SRC_DIR/gcc/gcc-$GCC_VERSION/gcc/BASE-VER ] ; then
     INCLUDE_VERSION=`cat $SRC_DIR/gcc/gcc-$GCC_VERSION/gcc/BASE-VER`
@@ -413,6 +432,8 @@ $BUILD_SRCDIR/configure --target=$ABI_CONFIGURE_TARGET \
                         --with-gxx-include-dir=$PREFIX_LOCATION/include/c++/$INCLUDE_VERSION \
                         --with-bugurl=$DEFAULT_ISSUE_TRACKER_URL \
                         --enable-languages=$ENABLE_LANGUAGES \
+			--enable-werror=no \
+			--disable-werror \
                         $EXTRA_CONFIG_FLAGS \
                         $ABI_CONFIGURE_EXTRA_FLAGS \
                         $MULTILIB_FLAG
@@ -428,7 +449,7 @@ dump "Building : $TOOLCHAIN toolchain [this can take a long time]."
 cd $BUILD_OUT
 export CC CXX
 export ABI=$HOST_GMP_ABI
-export NUM_JOBS
+export NUM_JOBS=1
 
 while [ -n "1" ]; do
     run make -j$NUM_JOBS
